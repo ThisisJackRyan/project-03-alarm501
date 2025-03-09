@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using static Alarm501.AlarmModel;
 using System.IO;
 
-namespace Alarm501
+namespace Alarm501ModelController
 {
     public class AlarmController
     {

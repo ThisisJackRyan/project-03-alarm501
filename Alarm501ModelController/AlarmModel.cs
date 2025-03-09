@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Alarm501
+namespace Alarm501ModelController
 {
     public class AlarmModel
     {

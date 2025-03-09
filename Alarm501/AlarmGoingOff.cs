@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Alarm501.AlarmModel;
+using Alarm501ModelController;
 
 namespace Alarm501
 {
