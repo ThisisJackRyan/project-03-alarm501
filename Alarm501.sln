@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29306.81
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alarm501", "Alarm501\Alarm501.csproj", "{C07316D1-8913-43A0-91EE-59244C276DE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alarm501GUI", "Alarm501\Alarm501GUI.csproj", "{C07316D1-8913-43A0-91EE-59244C276DE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alarm501Console", "Alarm501Console\Alarm501Console.csproj", "{715931FD-FA95-49DC-9565-2E81F6E07C52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alarm501ModelController", "Alarm501ModelController\Alarm501ModelController.csproj", "{79D871EC-F4BF-4296-BBEB-4EC1D0AEC71E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{C07316D1-8913-43A0-91EE-59244C276DE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C07316D1-8913-43A0-91EE-59244C276DE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C07316D1-8913-43A0-91EE-59244C276DE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{715931FD-FA95-49DC-9565-2E81F6E07C52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{715931FD-FA95-49DC-9565-2E81F6E07C52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{715931FD-FA95-49DC-9565-2E81F6E07C52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{715931FD-FA95-49DC-9565-2E81F6E07C52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79D871EC-F4BF-4296-BBEB-4EC1D0AEC71E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79D871EC-F4BF-4296-BBEB-4EC1D0AEC71E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79D871EC-F4BF-4296-BBEB-4EC1D0AEC71E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79D871EC-F4BF-4296-BBEB-4EC1D0AEC71E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
