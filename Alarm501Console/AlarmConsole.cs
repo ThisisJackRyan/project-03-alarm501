@@ -7,26 +7,92 @@ using System.Threading.Tasks;
 
 namespace Alarm501Console
 {
-    public class AlarmConsole
-    {
-        public void StartDialogue()
-        {
+	public class AlarmConsole
+	{
+		private Dictionary<uint, AlarmModel.Alarm> _alarmSelectionMap;
 
-        }
+		public void DisplayAlarmsConsole()
+		{
+			Console.Clear();
+			LoadSelectionMap();
+			PrintAlarms();
+			StartDialogue();
+		}
 
-        public void DisplayAlarms()
-        {
-            Console.Clear();
-            foreach(Alarm501ModelController.AlarmModel.Alarm a in Alarm501ModelController.AlarmModel.alarmList)
-            {
-                Console.WriteLine(a.ToString() + "\n");
-            }
-        }
+		private void LoadSelectionMap()
+		{
+			uint alarmsCounter = 0;
+			foreach (AlarmModel.Alarm a in AlarmModel.alarmList)
+			{
+				alarmsCounter += 1;
+				_alarmSelectionMap.Add(alarmsCounter, a);
 
-        /*
-         * 1. Display the alarms any time a new event occurs, below show all the possible options for input
-         * 2. Have a method interpret the users input, after interpretation send the correct delegate to the console for handling
-         * 3. Dialogue based, let the user build an alarm step by step, store there configurations in instance variables, exception handling necessary
-         */
-    }
+			}
+		}
+
+		private void PrintAlarms()
+		{
+			Console.WriteLine("All Alarms: ");
+			foreach(uint key in _alarmSelectionMap.Keys)
+			{
+				Console.WriteLine("(" + key + ") " + _alarmSelectionMap[key].ToString());
+			}
+
+			Console.WriteLine("Active Alarms: ");
+			foreach (AlarmModel.Alarm a in AlarmModel.alarmList.Where(alarm => alarm.IsOn).ToList())
+			{
+				Console.WriteLine(a.ToString());
+			}
+		}
+
+		private void StartDialogue()
+		{
+			Console.WriteLine("----------------------------------");
+			Console.WriteLine("(1) Add an alarm");
+			Console.WriteLine("(2) Edit an alarm");
+			Console.WriteLine("(3) Delete an alarm");
+			Console.WriteLine("----------------------------------");
+
+			bool cont = true;
+			while (cont)
+			{
+				Console.Write("Enter your choice: ");
+				string choice = Console.ReadLine();
+
+				switch (choice)
+				{
+					case "1":
+						cont = false;
+						AddAlarm();
+						break;
+					case "2":
+						cont = false;
+						EditAlarm();
+						break;
+					case "3":
+						cont = false;
+						DeleteAlarm();
+						break;
+					default:
+						Console.WriteLine("Invalid choice");
+						break;
+				}
+			}
+		}
+
+		private void AddAlarm()
+		{
+			// Code to add an alarm
+		}
+
+		private void EditAlarm()
+		{
+			// Code to edit an alarm
+		}
+
+		private void DeleteAlarm()
+		{
+			// Code to delete an alarm
+		}
+	}
 }

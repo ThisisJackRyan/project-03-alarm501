@@ -12,8 +12,9 @@ namespace Alarm501Console
     {
         static void Main(string[] args)
         {
+            TestData.InitializeTestData();
             AlarmConsole c = new AlarmConsole();
-            c.DisplayAlarms();
+            c.DisplayAlarmsConsole();
         }
     }
 }

@@ -47,8 +47,6 @@ namespace Alarm501ModelController
                 this.IsRepeating = isRepeating;
                 this.Index = index;
                 RepeatingDays = rd;
-
-
             }
 
             // Formats string in the correct format to display in the listbox
