@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alarm501ModelController;
+using static Alarm501ModelController.AlarmModel;
 
 namespace Alarm501
 {

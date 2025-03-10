@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Alarm501.AlarmModel;
+using Alarm501ModelController;
 
 namespace Alarm501
 {
-    public delegate void Handler();
-    public delegate void EditAlarmHandler(int alarmIndex);
-    public delegate void AlarmHandler(int alarmIndex, Alarm alarm);
-    public delegate void SnoozeAlarmHandler(int alarmIndex, Alarm alarm, int snoozeTime);
-
     static class Program
     {
         /// <summary>
@@ -25,9 +20,9 @@ namespace Alarm501
 
             AlarmModel am = new AlarmModel();
             AlarmController ac = new AlarmController(am);
-            Alarm501 view = new Alarm501(am, ac.AddAlarmDialouge, ac.FormClosing, ac.EditAlarmDialouge);
+            Alarm501 view = new Alarm501(am, ac.FormClosing, ac.createAlarm, ac.OnStop, ac.OnSnooze);
 
-            ac.RegisterObs(view.RefreshUI, view.DisableAddButton);
+            ac.RegisterObs(view.RefreshUI, view.DisableAddButton, view.AlarmTriggered);
 
             Application.Run(view);
         }

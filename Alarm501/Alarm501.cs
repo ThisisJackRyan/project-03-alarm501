@@ -11,6 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using Alarm501ModelController;
+using static Alarm501ModelController.AlarmModel;
+
 
 namespace Alarm501
 {
@@ -18,14 +21,16 @@ namespace Alarm501
     {
 
         AlarmModel model;
-        private Handler handlerAddAlarm;
         private Handler handlerFormClose;
-        private EditAlarmHandler handlerEditAlarm;
+        private AlarmHandler addAlarm;
+        private CreateAlarm createAlarm;
+        private AlarmHandler onStop;
+        private SnoozeAlarmHandler onSnooze;
 
         // List of alarms, binding list to update the UI
         //public static BindingList<AlarmModel> alarmList = new BindingList<AlarmModel> { };
 
-        public Alarm501(AlarmModel am, Handler aa, Handler fc, EditAlarmHandler ea)
+        public Alarm501(AlarmModel am, Handler fc, CreateAlarm ca, AlarmHandler ost, SnoozeAlarmHandler osn)
         {
             InitializeComponent();
 
@@ -38,10 +43,11 @@ namespace Alarm501
             model = am;
 
             handlerFormClose = fc;
-            handlerEditAlarm = ea;
-            handlerAddAlarm = aa;
+            createAlarm = ca;
+            onStop = ost;
+            onSnooze = osn;
 
-            if(AlarmModel.alarmList.Count >= 5)
+            if (AlarmModel.alarmList.Count >= 5)
             {
                 DisableAddButton();
             }
@@ -66,13 +72,22 @@ namespace Alarm501
         // Add alarm button click event
         private void UxAddBtn_Click(object sender, EventArgs e)
         {
-            handlerAddAlarm.Invoke();
+            AddEditAlarm addEditAlarm = new AddEditAlarm(createAlarm);
+            addEditAlarm.ShowDialog();
+        }
+
+        public void AlarmTriggered(int index, Alarm alarm)
+        {
+            AlarmGoingOff alarmGoingOff = new AlarmGoingOff(index, alarm, onStop, onSnooze);
+            alarmGoingOff.ShowDialog();
         }
 
         // Edit alarm button click event
         private void UxEditBtn_Click(object sender, EventArgs e)
         {
-            handlerEditAlarm.Invoke(UxAlarmList.SelectedIndex);
+            //handlerEditAlarm.Invoke(UxAlarmList.SelectedIndex);
+            AddEditAlarm addEditAlarm = new AddEditAlarm(createAlarm, UxAlarmList.SelectedIndex);
+            addEditAlarm.ShowDialog();
         }
 
         // Saves the alarms to a file when the form is closing
