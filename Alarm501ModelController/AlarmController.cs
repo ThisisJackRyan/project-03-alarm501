@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Newtonsoft.Json;
-using static Alarm501.AlarmModel;
+using static Alarm501ModelController.AlarmModel;
 using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Alarm501ModelController
 {
@@ -15,9 +18,10 @@ namespace Alarm501ModelController
         AlarmModel model;
         Handler refreshUI;
         Handler disableAddButton;
+        AlarmHandler alarmTriggerd;
 
         // Timer to check if the alarm is going off
-        private static System.Windows.Forms.Timer alarmCheck = new System.Windows.Forms.Timer();
+        private static System.Timers.Timer alarmCheck = null;
 
         /*
         // By default, waits 3 seconds before going off again
@@ -26,25 +30,25 @@ namespace Alarm501ModelController
         */
 
         // List of snoozed alarms
-        private static Dictionary<System.Windows.Forms.Timer, Alarm> snoozedTimers = new Dictionary<System.Windows.Forms.Timer, Alarm>();
+        private static Dictionary<System.Timers.Timer, Alarm> snoozedTimers = new Dictionary<System.Timers.Timer, Alarm>();
 
         public AlarmController(AlarmModel m)
         {
             model = m;
-
-            alarmCheck.Tick += new EventHandler(TimerEventProcessor);
-
-            alarmCheck.Interval = 980; // timer runs slightly faster than a second to make sure it catches the alarm on slower hardware
-            alarmCheck.Start();
+            alarmCheck = new System.Timers.Timer(1000);
+            alarmCheck.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
+            alarmCheck.AutoReset = true;
+            alarmCheck.Enabled = true;
 
             LoadAlarms();
         }
 
         // Register the observers
-        public void RegisterObs(Handler o, Handler d)
+        public void RegisterObs(Handler o, Handler d, AlarmHandler at)
         {
             refreshUI = o;
             disableAddButton = d;
+            alarmTriggerd = at;
         }
 
         // Running timer in the background to check if the alarm is going off
@@ -61,8 +65,7 @@ namespace Alarm501ModelController
                     {
                         if (alarm.AlarmTime.Hour == DateTime.Now.Hour && alarm.AlarmTime.Minute == DateTime.Now.Minute && alarm.AlarmTime.Second == DateTime.Now.Second)
                         {
-                            AlarmGoingOff alarmGoingOff = new AlarmGoingOff(alarm.Index, alarm, OnStop, OnSnooze);
-                            alarmGoingOff.ShowDialog();
+                            alarmTriggerd(alarm.Index, alarm);
                         }
                     }
                 }
@@ -75,12 +78,11 @@ namespace Alarm501ModelController
         // maybe need static
         private void SnoozeEventProcessor(object sender, EventArgs e)
         {
-            if (sender is System.Windows.Forms.Timer timer)
+            if (sender is System.Timers.Timer timer)
             {
                 timer.Stop();
 
-                AlarmGoingOff alarmGoingOff = new AlarmGoingOff(snoozedTimers[timer].Index, snoozedTimers[timer], OnStop, OnSnooze);
-                alarmGoingOff.ShowDialog();
+                alarmTriggerd(snoozedTimers[timer].Index, snoozedTimers[timer]);
 
                 snoozedTimers.Remove(timer);
             }
@@ -121,24 +123,16 @@ namespace Alarm501ModelController
 
         #region AddEditAlarm controls
 
-        // Make a new AddEditAlarm form
-        public void AddAlarmDialouge()
+        public void createAlarm(string name, DateTime datetime, bool isOn, AlarmSounds sound, bool isRepeating, List<bool> reaptingDays, int index=-1)
         {
-            AddEditAlarm addEditAlarm = new AddEditAlarm(AddAlarm);
-            addEditAlarm.ShowDialog();
-        }
 
-        // Make a new AddEditAlarm form with the alarm to edit
-        public void EditAlarmDialouge(int alarmIndex)
-        {
-            Alarm temp = alarmList[alarmIndex];
-
-            AddEditAlarm addEditAlarm = new AddEditAlarm(temp.AlarmTime, temp.IsOn, temp.AlarmSound, temp.IsRepeating, temp.RepeatingDays, temp.AlarmName, temp.Index, EditAlarm);
-            addEditAlarm.ShowDialog();
+            Alarm alarm = new Alarm(name, datetime, isOn, sound, isRepeating, index, reaptingDays);
+            if (index == -1) AddAlarm(alarm);
+            else EditAlarm(index, alarm);
         }
 
         // Add alarm to the list, max 5 alarms
-        public void AddAlarm(int index, Alarm alarm)
+        public void AddAlarm(Alarm alarm)
         {
             alarm.Index = alarmList.Count;
 
@@ -164,15 +158,17 @@ namespace Alarm501ModelController
         // Snooze the alarm, add a new snooze timer to the list
         public void OnSnooze(int index, Alarm alarm, int snoozeTime)
         {
-            System.Windows.Forms.Timer snoozeTimer = new System.Windows.Forms.Timer();
+            
+            System.Timers.Timer snoozeTimer = new System.Timers.Timer(snoozeTime * 60000);
+            
+            snoozeTimer.Elapsed += new ElapsedEventHandler(SnoozeEventProcessor);
 
-            snoozeTimer.Tick += SnoozeEventProcessor;
+            snoozeTimer.AutoReset = false;
 
-            snoozeTimer.Interval = snoozeTime * 60000;
+            snoozeTimer.Enabled = true;
 
             snoozedTimers.Add(snoozeTimer, alarm);
 
-            snoozeTimer.Start();
         }
 
         // Stop the alarm, if it is not repeating, turn it off

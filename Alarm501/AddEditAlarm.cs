@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alarm501ModelController;
+using static Alarm501ModelController.AlarmModel;
+
 
 namespace Alarm501
 {
@@ -36,28 +39,31 @@ namespace Alarm501
         public int Index { get; set; } = -1;
 
         private AlarmHandler AlarmHandler;
+        private CreateAlarm createAlarm;
+        private AlarmModel alarmModel;
 
         // Constructor for adding a new alarm
-        public AddEditAlarm(AlarmHandler alarmHandler)
+        public AddEditAlarm(CreateAlarm ca)
         {
-            AlarmHandler = alarmHandler;
+            createAlarm = ca;
 
             InitializeComponent();
 
             UxAlarmSoundSet.DataSource = Enum.GetValues(typeof(AlarmSounds));
         }
 
-        // Constructor for editing an alarm
-        public AddEditAlarm(DateTime dateTime, bool isOn, AlarmSounds alarmSound, bool isRepeating, List<bool> repeatingDays, string alarmName, int index, AlarmHandler alarmHandler)
+        public AddEditAlarm(CreateAlarm ca, int selectedIndex)
         {
-            AlarmName = alarmName;
-            DateTime = dateTime;
-            IsOn = isOn;
-            AlarmSound = alarmSound;
-            IsRepeating = isRepeating;
-            RepeatingDays = repeatingDays;
-            Index = index;
-            AlarmHandler = alarmHandler;
+            createAlarm = ca;
+            Alarm alarm = AlarmModel.alarmList[selectedIndex];
+
+            AlarmName = alarm.AlarmName;
+            DateTime = alarm.AlarmTime;
+            IsOn = alarm.IsOn;
+            AlarmSound = alarm.AlarmSound;
+            IsRepeating = alarm.IsRepeating;
+            RepeatingDays = alarm.RepeatingDays;
+            Index = alarm.Index;
 
             InitializeComponent();
 
@@ -71,11 +77,10 @@ namespace Alarm501
             }
 
             UxAlarmName.Text = AlarmName;
-            dateTimePicker1.Value = dateTime;
-            checkBox1.Checked = isOn;
+            dateTimePicker1.Value = DateTime;
+            checkBox1.Checked = IsOn;
             //UxAlarmSound.SelectedIndex = (int)alarmSound;
-            UxRepeatingSchedulesCheck.Checked = isRepeating;
-            //implement repeating days
+            UxRepeatingSchedulesCheck.Checked = IsRepeating;
         }
 
         // Set the alarm, if Index == -1, add a new alarm, otherwise edit the alarm
@@ -88,7 +93,7 @@ namespace Alarm501
                 temp.Add(UxRepeatingScheduleDays.GetItemChecked(i));
             }
 
-            AlarmHandler.Invoke(Index, new AlarmModel.Alarm(UxAlarmName.Text, dateTimePicker1.Value, checkBox1.Checked, (AlarmSounds)UxAlarmSoundSet.SelectedItem, UxRepeatingSchedulesCheck.Checked, Index, temp));
+            createAlarm(UxAlarmName.Text, dateTimePicker1.Value, checkBox1.Checked, (AlarmSounds)UxAlarmSoundSet.SelectedItem, UxRepeatingSchedulesCheck.Checked, temp, Index);
             this.Close();
         }
 
